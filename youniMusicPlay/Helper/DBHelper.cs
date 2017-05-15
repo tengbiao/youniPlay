@@ -16,46 +16,27 @@ namespace youni.Helper
         /// //"Data Source=.;Initial Catalog=youni;Integrated Security=True";
         /// </summary>
         public static string Connstring = ConfigurationManager.ConnectionStrings["DataBaseConnection"].ToString();
-        //连接对象
-        private static SqlConnection conn = null;
-        private static void InitConnection()
-        {
-            if (conn == null)
-            {
-                conn = new SqlConnection(Connstring);
-            }
-            if (conn.State == ConnectionState.Closed)
-            {
-                conn.Open();
-            }
-            if (conn.State == ConnectionState.Broken)
-            {
-                conn.Close();
-                conn.Open();
-            }
-        }
-        public static SqlDataReader GDR(string sqlStr)
-        {
-            InitConnection();
-            SqlCommand cmd = new SqlCommand(sqlStr, conn);
-            return cmd.ExecuteReader(CommandBehavior.CloseConnection);
-        }
+
         public static DataTable GDT(string sqlStr)
         {
-            InitConnection();
-            DataTable table = new DataTable();
-            SqlDataAdapter dap = new SqlDataAdapter(sqlStr, conn);
-            dap.Fill(table);
-            conn.Close();
-            return table;
+            //using 自动销毁关闭 SqlConnection
+            using (SqlConnection conn = new SqlConnection(Connstring))
+            {
+                DataTable table = new DataTable();
+                SqlDataAdapter dap = new SqlDataAdapter(sqlStr, conn);
+                dap.Fill(table);
+                return table;
+            }
         }
+
         public static bool ENQ(string sqlStr)
         {
-            InitConnection();
-            SqlCommand cmd = new SqlCommand(sqlStr, conn);
-            int result = cmd.ExecuteNonQuery();
-            conn.Close();
-            return result > 0;
+            using (SqlConnection conn = new SqlConnection(Connstring))
+            {
+                SqlCommand cmd = new SqlCommand(sqlStr, conn);
+                int result = cmd.ExecuteNonQuery();
+                return result > 0;
+            }
         }
     }
 }
