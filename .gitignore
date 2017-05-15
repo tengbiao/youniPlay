@@ -3,3 +3,7 @@
 ################################################################################
 
 /.vs
+/youniMusicPlay/bin/Debug
+/youniMusicPlay/obj/Debug/TempPE
+/youniMusicPlay/obj/Debug
+/youniMusicPlay/obj/Release
